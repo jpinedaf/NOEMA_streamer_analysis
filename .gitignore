@@ -1,0 +1,6 @@
+# log and CASA last files
+*.log
+*.last
+
+# FITS files
+*.fits
