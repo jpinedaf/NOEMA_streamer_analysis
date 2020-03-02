@@ -4,3 +4,17 @@
 
 # FITS files
 *.fits
+
+# macOS Files
+.DS_Store
+
+# cache
+__pycache__
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea
+venv
+*.iml
