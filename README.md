@@ -4,7 +4,7 @@ About
 
 This repository includes the scripts used to carry ou the analysis of the NOEMA streamer paper (Pineda et al. in prep).
 
-it requieres the package [velocity_tools](https://github.com/jpinedaf/velocity_tools).
+it requires the package [velocity_tools](https://github.com/jpinedaf/velocity_tools).
 
 
 Credits
@@ -18,10 +18,11 @@ Dependencies
 ------------
 ------------
 
-* astropy (>=1.1)
+* astropy (>=2.0)
 * pyspeckit (>=0.1.19)
-* matplotlib (>=1.5.1)
+* matplotlib (>=2.0)
 * aplpy (>=2.0)
 * spectral_cube (>=0.3.0)
 * radio_beam
 * scikit-image (>=0.12.3)
+* regions (>0.5)
