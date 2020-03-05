@@ -67,7 +67,7 @@ phi0 = 365.*u.deg
 #v_r0_list = np.linspace(0.0, 0.5, num=3)*u.km/u.s
 v_r0_list = [0.0]*u.km/u.s
 v_r0 = 0*u.km/u.s
-omega_list = [4e-13]/u.s
+omega_list = [4e-14, 1e-14]/u.s
 omega0 = 4e-13/u.s
 #lw_i = 2
 #ls_i = '-'
@@ -86,26 +86,27 @@ def stream_label(v_r=None, omega=None, theta=None, phi=None):
     return my_label
 
 #for v_r0 in v_r0_list:
-#    for omega0 in omega_list:
+for omega0 in omega_list:
         # for r0, theta0, phi0, ls_i in zip(r0_list, theta0_list, phi0_list, ls_list):
         # for phi0 in phi0_list:
  #       for theta0, phi0 in zip(theta0_list, phi0_list):
-my_label = stream_label(v_r=v_r0, omega=omega0,
-                        theta=theta0, phi=phi0)
-(x1, y1, z1), (vx1, vy1, vz1) = SL.xyz_stream(
-            mass=Mstar, r0=r0, theta0=theta0, phi0=phi0,
-            omega=omega0, v_r0=v_r0, inc=inc, pa=PA_ang)
-d_sky_au = np.sqrt(x1**2 + z1**2)
-gd_2000 = (d_sky_au > 2.4e3*u.au)
-ax.plot(x1, y1, z1, marker='o', markersize=3)
-# Stream line into arcsec
-dra_stream = -x1.value / distance
-ddec_stream = z1.value / distance
-fil = SkyCoord(dra_stream*u.arcsec, ddec_stream*u.arcsec,
-                 frame=Per2_ref).transform_to(FK5)
-ax2.plot(fil.ra, fil.dec, transform=ax2.get_transform('fk5'),
-         ls='-', lw=2, label=my_label)
-ax3.scatter(d_sky_au[gd_2000], v_lsr + vy1[gd_2000], marker='o')
+    my_label = stream_label(v_r=v_r0, omega=omega0,
+                            theta=theta0, phi=phi0)
+    (x1, y1, z1), (vx1, vy1, vz1) = SL.xyz_stream(
+                mass=Mstar/100., r0=r0, theta0=theta0, phi0=phi0,
+                omega=omega0, v_r0=v_r0, inc=inc, pa=PA_ang)
+    d_sky_au = np.sqrt(x1**2 + z1**2)
+    gd_2000 = (d_sky_au > 2.4e3*u.au)
+    ax.plot(x1, y1, z1, marker='o', markersize=3)
+    # Stream line into arcsec
+    dra_stream = -x1.value / distance
+    ddec_stream = z1.value / distance
+    fil = SkyCoord(dra_stream*u.arcsec, ddec_stream*u.arcsec,
+                     frame=Per2_ref).transform_to(FK5)
+    ax2.plot(fil.ra, fil.dec, transform=ax2.get_transform('fk5'),
+             ls='-', lw=2, label=my_label)
+    ax3.scatter(d_sky_au[gd_2000], v_lsr + vy1[gd_2000], marker='o')
+
 # Add axes to see rotations
 x_b = np.array([1, 0, 0])*8e3/distance
 y_b = np.array([0, 0, 0])*8e3/distance
