@@ -29,9 +29,6 @@ fig2.show_regions(region_file)
 #
 fig3 = plt.figure(figsize=(5, 4))
 ax3 = fig3.add_subplot(111)
-# axes labels
-# ax2.set_xlabel('Right Ascension (J2000)')
-# ax2.set_ylabel('Declination (J2000)')
 ax3.set_xlabel('Projected distance (au)')
 ax3.set_ylabel(r"V$_{lsr}$ (km s$^{-1}$)")
 #
@@ -82,7 +79,9 @@ ax3.set_xlim(2.0e3, 9e3)
 ax3.text(2400, 7.5, r"HC$_3$N ($10-9$)")
 ax3.text(2400, 7.45, "Streamline model", color='red')
 # save files
-fig2.savefig('figures/Per-emb-2_HC3N_10-9_TdV_streamline.pdf',
-             adjust_bbox='tight', dpi=120)
+fig2.add_colorbar(axis_label_text=r'Integrated Intensity (Jy beam$^{-1}$ km s$^{-1}$)',
+                   ticks=[0, 0.05, 0.1, 0.15])
+fig2.colorbar.hide()
+fig2.savefig('figures/Per-emb-2_HC3N_10-9_TdV_streamline.pdf', dpi=120)
 fig3.savefig('figures/Per-emb-2_HC3N_10-9_Vlsr_streamline.pdf',
              bbox_inches='tight', dpi=120)
