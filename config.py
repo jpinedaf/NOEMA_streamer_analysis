@@ -51,3 +51,45 @@ def per_emb_2_get_vc_r():
     v_los = Vc_cutout[gd]*u.km/u.s
     r_proj = rad_cutout[gd]
     return r_proj, v_los
+
+
+def PB_NOEMA(freq_obs):
+    """ Primary beam diameter for NOEMA at the observed frequency.
+
+    freq_obs is the observed frequency in GHz.
+
+    PB = 64.1 * (72.78382*u.GHz) / freq_obs
+    """
+    return (64.1 * u.arcsec * 72.78382 * u.GHz / freq_obs).decompose()
+
+
+def PB_SMA(freq_obs):
+    """ Primary beam diameter for SMA at the observed frequency.
+
+    freq_obs is the observed frequency in GHz.
+
+    PB = 48.0 * (231.0*u.GHz) / freq_obs
+    """
+    return (48.0 * u.arcsec * 231 * u.GHz / freq_obs).decompose()
+
+
+def setup_plot_NOEMA(fig_i, label_col='black', star_col='red'):
+    """
+    Setup of NOEMA plots, since they will show all the same format.
+    """
+    fig_i.set_system_latex(True)
+    fig_i.ticks.set_color(label_col)
+    fig_i.recenter(53.075, 30.8299, radius=45 * (u.arcsec).to(u.deg))
+    fig_i.set_nan_color('0.9')
+    fig_i.add_beam(color=label_col)
+    distance = 300.  # pc
+    ang_size = (5e3 / distance) * u.arcsec
+    fig_i.add_scalebar(ang_size, label='5,000 au', color=label_col)
+    fig_i.show_markers(ra_Per2.value, dec_Per2.value, marker='*', s=60, layer='star',
+                       edgecolor=star_col, facecolor=label_col, zorder=31)
+    fig_i.tick_labels.set_xformat('hh:mm:ss')
+    fig_i.tick_labels.set_yformat('dd:mm:ss')
+    fig_i.ticks.set_length(7)
+    fig_i.axis_labels.set_xtext('Right Ascension (J2000)')
+    fig_i.axis_labels.set_ytext('Declination (J2000)')
+    return

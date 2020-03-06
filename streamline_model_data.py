@@ -21,33 +21,15 @@ Per2_ref = Per2_c.skyoffset_frame()
 # First we setup the plotting windows: 3d plot and one with wcs coordinates
 #
 plt.ion()
-# get data and plot background image for streamer
-# hdu = fits.open(HC3N_TdV_10_9)[0]
-# wcs = WCS(hdu.header)
-# fig2 = plt.figure(figsize=(4, 4))
-# ax2 = fig2.add_subplot(111, projection=wcs)
-# ax2.imshow(hdu.data, vmin=0, vmax=160.e-3, origin='lower', cmap='Greys')
-# ax2.set_autoscale_on(False)
-# ax2.plot(ra_Per2, dec_Per2, transform=ax2.get_transform('fk5'), marker='*',
-#          color='red')
-# ax2.plot(ra_poly, dec_poly, transform=ax2.get_transform('fk5'), color='black')
-# hdu = fits.open(HC3N_TdV_10_9)[0]
-# wcs = WCS(hdu.header)
 import aplpy
 fig2 = aplpy.FITSFigure(HC3N_TdV_10_9, figsize=(4, 4))
-# ax2 = fig2.add_subplot(111, projection=wcs)
 fig2.show_grayscale(vmin=0, vmax=160.e-3, invert=True)#, cmap='Greys')
-# ax2.set_autoscale_on(False)
-# ax2.plot(ra_Per2, dec_Per2, transform=ax2.get_transform('fk5'), marker='*',
-#          color='red')
-# ax2.plot(ra_poly, dec_poly, transform=ax2.get_transform('fk5'), color='black')
-# fig2.show_polygons(np.array([ra_poly, dec_poly]))
-fig2.show_regions(region_file)
-fig2.show_markers(ra_Per2, dec_Per2, marker='*')
-fig2.add_beam()
+# setup and colorbar
+setup_plot_NOEMA(fig2, label_col='black', star_col='yellow')
 
+fig2.show_regions(region_file)
 #
-fig3 = plt.figure(figsize=(4, 4))
+fig3 = plt.figure(figsize=(5, 4))
 ax3 = fig3.add_subplot(111)
 # axes labels
 # ax2.set_xlabel('Right Ascension (J2000)')
@@ -82,18 +64,28 @@ v_lsr = 7.05*u.km/u.s
             mass=Mstar, r0=r0, theta0=theta0, phi0=phi0,
             omega=omega0, v_r0=v_r0, inc=inc, pa=PA_ang, rmin=5.5e3*u.au)
 d_sky_au = np.sqrt(x1**2 + z1**2)
-# gd_2000 = (d_sky_au > 2.4e3*u.au)
 # Stream line into arcsec
 dra_stream = -x1.value / distance
 ddec_stream = z1.value / distance
 fil = SkyCoord(dra_stream*u.arcsec, ddec_stream*u.arcsec,
                  frame=Per2_ref).transform_to(FK5)
-fig2.show_polygons([fil.ra.value*u.deg, fil.dec.value*u.deg], ls='-', lw=2, color='red')
+#
+fig2.show_markers(fil.ra.value*u.deg, fil.dec.value*u.deg,
+                  marker='o', color='red', s=3)
+fig2.add_label(0.75, 0.9, r"HC$_3$N ($10-9$)", color='black', relative=True,
+               size=14, weight=60)
+freq_HC5N_10_9 = fits.getheader(HC3N_TdV_10_9)['RESTFREQ'] * u.Hz
+fig2.show_circles(ra_Per2, dec_Per2, PB_NOEMA(freq_HC5N_10_9).to(u.deg)*0.5,
+                   ls=':', color='black')
 ax3.plot(d_sky_au, v_lsr + vy1, color='red')
 ax3.xaxis.set_ticks(np.arange(3e3, 12e3, 2e3))
 ax3.yaxis.set_ticks(np.arange(6.9, 7.6, 0.2))
-ax3.set_ylim(6.9, 7.6)
-ax3.set_xlim(2.0e3, 11e3)
+ax3.set_ylim(6.9, 7.55)
+ax3.set_xlim(2.0e3, 9e3)
+ax3.text(2400, 7.5, r"HC$_3$N ($10-9$)")
+ax3.text(2400, 7.45, "Streamline model", color='red')
 # save files
-fig2.savefig('figures/Per-emb-2_HC3N_10-9_TdV_streamline.pdf', bbox_inches='tight')
-fig3.savefig('figures/Per-emb-2_HC3N_10-9_Vlsr_streamline.pdf', bbox_inches='tight')
+fig2.savefig('figures/Per-emb-2_HC3N_10-9_TdV_streamline.pdf',
+             adjust_bbox='tight', dpi=120)
+fig3.savefig('figures/Per-emb-2_HC3N_10-9_Vlsr_streamline.pdf',
+             bbox_inches='tight', dpi=120)
