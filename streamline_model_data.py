@@ -9,10 +9,8 @@ from config import *
 # Main parameters to generate a streamline
 Mstar = 3.2*u.Msun
 # Inclination angle is not well constrained
-#
 inc = -43*u.deg
 PA_ang = 130*u.deg
-
 # Create Per-emb-2 reference coordinate system
 from astropy.coordinates import SkyCoord, FK5
 Per2_c = SkyCoord(ra_Per2, dec_Per2, frame='fk5')
@@ -23,7 +21,7 @@ Per2_ref = Per2_c.skyoffset_frame()
 plt.ion()
 import aplpy
 fig2 = aplpy.FITSFigure(HC3N_TdV_10_9, figsize=(4, 4))
-fig2.show_grayscale(vmin=0, vmax=160.e-3, invert=True)#, cmap='Greys')
+fig2.show_grayscale(vmin=0, vmax=160.e-3, invert=True)
 # setup and colorbar
 setup_plot_NOEMA(fig2, label_col='black', star_col='yellow')
 
@@ -57,7 +55,6 @@ r0 = 0.9e4*u.au
 phi0 = 365.*u.deg
 v_r0 = 0*u.km/u.s
 omega0 = 4e-13/u.s
-# v_lsr = 6.98*u.km/u.s
 v_lsr = 7.05*u.km/u.s
 #
 (x1, y1, z1), (vx1, vy1, vz1) = SL.xyz_stream(
