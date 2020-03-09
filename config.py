@@ -1,23 +1,36 @@
 import astropy.units as u
 import numpy as np
+from astropy.io import fits
 # set tickmarks inwards
 import matplotlib as mpl
+from matplotlib import rc
+rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+rc('text', usetex=True)
 mpl.rcParams['xtick.direction'] = 'in'
 mpl.rcParams['ytick.direction'] = 'in'
-mpl.rc('text.latex', preamble=r'\usepackage{sfmath}')
 
-file_HC3N_10_9_TdV_mJy
+# file_HC3N_10_9_TdV_mJy
 HC3N_TdV_10_9 = 'data/Per-emb-2-HC3N_10-9_TdV.fits'
 HC3N_Vc_10_9 = 'data/Per-emb-2-HC3N_10-9_fit_Vc.fits'
 HC3N_dv_10_9 = 'data/Per-emb-2-HC3N_10-9_fit_sigma_v.fits'
+ALMA_cont = 'data/Per-emb-2_1.3mm_ALMA_mJy.fits'
+# file_CCS_TdV_mJy
+CCS_TdV = 'data/Per-emb-2-CCS_8_7-7_6_TdV.fits'
+CS_TdV = 'data/Per-emb-2-13CS_2-1_TdV.fits'
+N2Hp_TdV = 'data/Per-emb-2-N2Hp-1-0_TdV.fits'
+N2Dp_TdV = 'data/Per-emb-2-N2Dp-1-0_TdV.fits'
+#
 region_file_white = 'Streamer_North.reg'
 region_file = 'Streamer_North_v2.reg'
 ra_Per2 = 15 * (3 + (32 + 17.92/60.) / 60.) * u.deg
 dec_Per2 = (30 + (49 + 48.03 / 60.) / 60.) * u.deg
+ra_ALMA_zoom = 53.07475*u.deg
+dec_ALMA_zoom = 30.8299*u.deg
+radius_ALMA_zoom = (2.5*u.arcsec).to(u.deg)
 distance = 300.
+HC3N_10_9_levels = 10e-3*np.arange(3,20,3)
 
 # CO contour levels to show outflow
-Per-emb-2-CO_2-1-TdV-blue.fits
 file_12CO_blue = 'data/Per-emb-2-CO_2-1-TdV-blue.fits'
 file_12CO_red = 'data/Per-emb-2-CO_2-1-TdV-red.fits'
 CO_red_levs = np.arange(2, 20, 2)
@@ -104,3 +117,21 @@ def setup_plot_noema(fig_i, label_col='black', star_col='red'):
     fig_i.axis_labels.set_xtext(r'Right Ascension (J2000)')
     fig_i.axis_labels.set_ytext(r'Declination (J2000)')
     return
+
+def convert_into_mili(file_name):
+    """
+    It converts a file into one rescaled by 1e3.
+    This is useful to convert between Jy -> mJy or m/s into km/s
+    for plotting purposes (e.g. to use with aplpy).
+
+    Usage:
+    fig = aplpy.FITSFigure(convert_into_mili(file_in_Jy), figsize=(4,4))
+    fig.show_colorscale(vmin=0, vmax=160, cmap='inferno')
+    fig.add_colorbar()
+    fig.colorbar.set_axis_label_text(r'Integrated Intensity (mJy beam$^{-1}$ km s$^{-1}$)')
+
+    :param file_name: string with filename to process
+    :return: hdu
+    """
+    data, hd = fits.getdata(file_name, header=True)
+    return fits.PrimaryHDU(data=data*1e3, header=hd)
