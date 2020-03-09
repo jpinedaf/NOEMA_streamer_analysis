@@ -4,23 +4,32 @@ import numpy as np
 import matplotlib as mpl
 mpl.rcParams['xtick.direction'] = 'in'
 mpl.rcParams['ytick.direction'] = 'in'
+mpl.rc('text.latex', preamble=r'\usepackage{sfmath}')
 
+file_HC3N_10_9_TdV_mJy
 HC3N_TdV_10_9 = 'data/Per-emb-2-HC3N_10-9_TdV.fits'
 HC3N_Vc_10_9 = 'data/Per-emb-2-HC3N_10-9_fit_Vc.fits'
+HC3N_dv_10_9 = 'data/Per-emb-2-HC3N_10-9_fit_sigma_v.fits'
+region_file_white = 'Streamer_North.reg'
 region_file = 'Streamer_North_v2.reg'
 ra_Per2 = 15 * (3 + (32 + 17.92/60.) / 60.) * u.deg
 dec_Per2 = (30 + (49 + 48.03 / 60.) / 60.) * u.deg
 distance = 300.
 
+# CO contour levels to show outflow
+Per-emb-2-CO_2-1-TdV-blue.fits
+file_12CO_blue = 'data/Per-emb-2-CO_2-1-TdV-blue.fits'
+file_12CO_red = 'data/Per-emb-2-CO_2-1-TdV-red.fits'
+CO_red_levs = np.arange(2, 20, 2)
+CO_blue_levs = np.arange(1.4, 12, 1.4)
+
+# Polygon coordinates added by hand from the region file
+# The next line is to close the polygon
 poly = np.array([53.079519, 30.83452, 53.078404, 30.836177, 53.076689, 30.83787, 53.075746, 30.837944,
                  53.075017, 30.837208, 53.075067, 30.835867, 53.076296, 30.833681, 53.07735, 30.831875,
                  53.077525, 30.829164, 53.078662, 30.827808, 53.079905, 30.82885, 53.080033, 30.832016])
 ra_poly = np.append(np.reshape(poly, [-1, 2])[:, 0], poly[0])*u.deg
 dec_poly = np.append(np.reshape(poly, [-1, 2])[:, 1], poly[1])*u.deg
-# np.array([53.078662, 53.077437, 53.075771, 53.075683, 53.075246, 53.075067, 53.076296, 53.07735,
-#                     53.077525, 53.078662, 53.079979, 53.079629, 53.078662])*u.deg
-# dec_poly = np.array([30.836617, 30.840306, 30.840231, 30.839853, 30.838425, 30.835867, 30.833681, 30.831875,
-#                      30.829164, 30.827808, 30.829392, 30.834283, 30.836617])*u.deg
 
 
 def per_emb_2_get_vc_r():
@@ -53,27 +62,29 @@ def per_emb_2_get_vc_r():
     return r_proj, v_los
 
 
-def PB_NOEMA(freq_obs):
-    """ Primary beam diameter for NOEMA at the observed frequency.
+def pb_noema(freq_obs):
+    """
+    Primary beam diameter for NOEMA at the observed frequency.
+        PB = 64.1 * (72.78382*u.GHz) / freq_obs
 
-    freq_obs is the observed frequency in GHz.
-
-    PB = 64.1 * (72.78382*u.GHz) / freq_obs
+    :param freq_obs: is the observed frequency in GHz.
+    :return: The primary beam FWHM in arcsec
     """
     return (64.1 * u.arcsec * 72.78382 * u.GHz / freq_obs).decompose()
 
 
-def PB_SMA(freq_obs):
-    """ Primary beam diameter for SMA at the observed frequency.
+def pb_sma(freq_obs):
+    """
+    Primary beam diameter for SMA at the observed frequency.
+        PB = 48.0 * (231.0*u.GHz) / freq_obs
 
-    freq_obs is the observed frequency in GHz.
-
-    PB = 48.0 * (231.0*u.GHz) / freq_obs
+    :param freq_obs: is the observed frequency in GHz.
+    :return: The primary beam FWHM in arcsec
     """
     return (48.0 * u.arcsec * 231 * u.GHz / freq_obs).decompose()
 
 
-def setup_plot_NOEMA(fig_i, label_col='black', star_col='red'):
+def setup_plot_noema(fig_i, label_col='black', star_col='red'):
     """
     Setup of NOEMA plots, since they will show all the same format.
     """
