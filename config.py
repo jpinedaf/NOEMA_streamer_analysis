@@ -48,7 +48,7 @@ def per_emb_2_get_vc_r():
     wcs_Vc = WCS(HC3N_Vc_10_9)
     #
     hd_Vc = fits.getheader(HC3N_Vc_10_9)
-    results = c_offset.generate_offsets(hd_Vc, ra_Per2, dec_Per2, PA_Angle=0*u.deg, inclination=0*u.deg)
+    results = c_offset.generate_offsets(hd_Vc, ra_Per2, dec_Per2, pa_angle=0*u.deg, inclination=0*u.deg)
     rad_au = (results.r * distance*u.pc).to(u.au, equivalencies=u.dimensionless_angles())
     # Vc_all =
     #
@@ -101,6 +101,6 @@ def setup_plot_noema(fig_i, label_col='black', star_col='red'):
     fig_i.tick_labels.set_xformat('hh:mm:ss')
     fig_i.tick_labels.set_yformat('dd:mm:ss')
     fig_i.ticks.set_length(7)
-    fig_i.axis_labels.set_xtext('Right Ascension (J2000)')
-    fig_i.axis_labels.set_ytext('Declination (J2000)')
+    fig_i.axis_labels.set_xtext(r'Right Ascension (J2000)')
+    fig_i.axis_labels.set_ytext(r'Declination (J2000)')
     return

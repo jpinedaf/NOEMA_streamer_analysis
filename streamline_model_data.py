@@ -9,10 +9,8 @@ from config import *
 # Main parameters to generate a streamline
 Mstar = 3.2*u.Msun
 # Inclination angle is not well constrained
-#
 inc = -43*u.deg
 PA_ang = 130*u.deg
-
 # Create Per-emb-2 reference coordinate system
 from astropy.coordinates import SkyCoord, FK5
 Per2_c = SkyCoord(ra_Per2, dec_Per2, frame='fk5')
@@ -23,7 +21,7 @@ Per2_ref = Per2_c.skyoffset_frame()
 plt.ion()
 import aplpy
 fig2 = aplpy.FITSFigure(HC3N_TdV_10_9, figsize=(4, 4))
-fig2.show_grayscale(vmin=0, vmax=160.e-3, invert=True)#, cmap='Greys')
+fig2.show_grayscale(vmin=0, vmax=160.e-3, invert=True)
 # setup and colorbar
 setup_plot_NOEMA(fig2, label_col='black', star_col='yellow')
 
@@ -31,9 +29,6 @@ fig2.show_regions(region_file)
 #
 fig3 = plt.figure(figsize=(5, 4))
 ax3 = fig3.add_subplot(111)
-# axes labels
-# ax2.set_xlabel('Right Ascension (J2000)')
-# ax2.set_ylabel('Declination (J2000)')
 ax3.set_xlabel('Projected distance (au)')
 ax3.set_ylabel(r"V$_{lsr}$ (km s$^{-1}$)")
 #
@@ -57,7 +52,6 @@ r0 = 0.9e4*u.au
 phi0 = 365.*u.deg
 v_r0 = 0*u.km/u.s
 omega0 = 4e-13/u.s
-# v_lsr = 6.98*u.km/u.s
 v_lsr = 7.05*u.km/u.s
 #
 (x1, y1, z1), (vx1, vy1, vz1) = SL.xyz_stream(
@@ -85,7 +79,9 @@ ax3.set_xlim(2.0e3, 9e3)
 ax3.text(2400, 7.5, r"HC$_3$N ($10-9$)")
 ax3.text(2400, 7.45, "Streamline model", color='red')
 # save files
-fig2.savefig('figures/Per-emb-2_HC3N_10-9_TdV_streamline.pdf',
-             adjust_bbox='tight', dpi=120)
+fig2.add_colorbar(axis_label_text=r'Integrated Intensity (Jy beam$^{-1}$ km s$^{-1}$)',
+                   ticks=[0, 0.05, 0.1, 0.15])
+fig2.colorbar.hide()
+fig2.savefig('figures/Per-emb-2_HC3N_10-9_TdV_streamline.pdf', dpi=120)
 fig3.savefig('figures/Per-emb-2_HC3N_10-9_Vlsr_streamline.pdf',
              bbox_inches='tight', dpi=120)
