@@ -4,7 +4,8 @@ from astropy.io import fits
 # set tickmarks inwards
 import matplotlib as mpl
 from matplotlib import rc
-rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+#rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+rc('font',**{'family':'serif'})#,'sans-serif':['Helvetica']})
 rc('text', usetex=True)
 mpl.rcParams['xtick.direction'] = 'in'
 mpl.rcParams['ytick.direction'] = 'in'
@@ -22,6 +23,8 @@ N2Dp_TdV = 'data/Per-emb-2-N2Dp-1-0_TdV.fits'
 #
 region_file_white = 'Streamer_North.reg'
 region_file = 'Streamer_North_v2.reg'
+stream_pickle = 'Streamer_model.pickle'
+vlsr_rad_kde_pickle = 'Velocity_Radius_KDE.pickle'
 ra_Per2 = 15 * (3 + (32 + 17.92/60.) / 60.) * u.deg
 dec_Per2 = (30 + (49 + 48.03 / 60.) / 60.) * u.deg
 ra_ALMA_zoom = 53.07475*u.deg

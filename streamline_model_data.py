@@ -23,7 +23,7 @@ import aplpy
 fig2 = aplpy.FITSFigure(HC3N_TdV_10_9, figsize=(4, 4))
 fig2.show_grayscale(vmin=0, vmax=160.e-3, invert=True)
 # setup and colorbar
-setup_plot_NOEMA(fig2, label_col='black', star_col='yellow')
+setup_plot_noema(fig2, label_col='black', star_col='yellow')
 
 fig2.show_regions(region_file)
 #
@@ -69,7 +69,7 @@ fig2.show_markers(fil.ra.value*u.deg, fil.dec.value*u.deg,
 fig2.add_label(0.75, 0.9, r"HC$_3$N ($10-9$)", color='black', relative=True,
                size=14, weight=60)
 freq_HC5N_10_9 = fits.getheader(HC3N_TdV_10_9)['RESTFREQ'] * u.Hz
-fig2.show_circles(ra_Per2, dec_Per2, PB_NOEMA(freq_HC5N_10_9).to(u.deg)*0.5,
+fig2.show_circles(ra_Per2, dec_Per2, pb_noema(freq_HC5N_10_9).to(u.deg)*0.5,
                    ls=':', color='black')
 ax3.plot(d_sky_au, v_lsr + vy1, color='red')
 ax3.xaxis.set_ticks(np.arange(3e3, 12e3, 2e3))
@@ -77,11 +77,19 @@ ax3.yaxis.set_ticks(np.arange(6.9, 7.6, 0.2))
 ax3.set_ylim(6.9, 7.55)
 ax3.set_xlim(2.0e3, 9e3)
 ax3.text(2400, 7.5, r"HC$_3$N ($10-9$)")
-ax3.text(2400, 7.45, "Streamline model", color='red')
+ax3.text(2400, 7.45, r"Streamline model", color='red')
 # save files
 fig2.add_colorbar(axis_label_text=r'Integrated Intensity (Jy beam$^{-1}$ km s$^{-1}$)',
                    ticks=[0, 0.05, 0.1, 0.15])
 fig2.colorbar.hide()
-fig2.savefig('figures/Per-emb-2_HC3N_10-9_TdV_streamline.pdf', dpi=120)
-fig3.savefig('figures/Per-emb-2_HC3N_10-9_Vlsr_streamline.pdf',
-             bbox_inches='tight', dpi=120)
+
+import pickle
+stream_model = {'ra':fil.ra.value*u.deg, 'dec':fil.dec.value*u.deg,
+                'd_sky_au':d_sky_au, 'vlsr':v_lsr + vy1}
+with open(stream_pickle, 'wb') as f:
+    pickle.dump(stream_model, f)
+
+KDE_vel_rad = {'radius':xx, 'v_lsr':yy, 'dens':zz}
+with open(vlsr_rad_kde_pickle, 'wb') as f:
+    pickle.dump(KDE_vel_rad, f)
+
