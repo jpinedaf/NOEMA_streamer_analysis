@@ -80,3 +80,20 @@ ratio_pb_corr_cutout_mean_err = ratio_pb_corr_cutout_std/np.sqrt(N_pix)
 
 print(np.around(ratio_cutout_mean, decimals=2), np.around(ratio_cutout_mean_err, decimals=2))
 print(np.around(ratio_pb_corr_cutout_mean, decimals=2), np.around(ratio_pb_corr_cutout_mean_err, decimals=2))
+
+
+Pop_Up = 1.963E-02
+N_10_9_sm_mean/Pop_Up / u.cm**2
+Area_pix = ( np.abs(hd_10_9_sm['CDELT1']*hd_10_9_sm['CDELT1'])*u.deg**2 * distance**2).to(u.pc**2, equivalencies=u.dimensionless_angles())
+
+N_total_cutout_sum= (np.sum((N_10_9_sm_cutout[my_mask ==1]))/u.cm**2 * Area_pix / Pop_Up).decompose()
+print( '{0:.2e}'.format(N_total_cutout_sum))
+X_HC3N_min = 3.0e-10
+X_HC3N_max = 2.8e-9
+
+from astropy.constants import m_p, G
+
+M_total_min = (N_total_cutout_sum * 2*m_p).to(u.Msun) / X_HC3N_max
+M_total_max = (N_total_cutout_sum * 2*m_p).to(u.Msun) / X_HC3N_min
+print( np.around(M_total_min, decimals=3), np.around(M_total_max, decimals=3))
+
