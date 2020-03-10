@@ -4,14 +4,22 @@ from astropy.io import fits
 # set tickmarks inwards
 import matplotlib as mpl
 from matplotlib import rc
+from astropy.constants import c, h, k_B
+
 #rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 rc('font',**{'family':'serif'})#,'sans-serif':['Helvetica']})
 rc('text', usetex=True)
 mpl.rcParams['xtick.direction'] = 'in'
 mpl.rcParams['ytick.direction'] = 'in'
 
+stream_pickle = 'Streamer_model.pickle'
+vlsr_rad_kde_pickle = 'Velocity_Radius_KDE.pickle'
+
 # file_HC3N_10_9_TdV_mJy
+HC3N_TdV_8_7 = 'data/Per-emb-2-HC3N_8-7_TdV.fits'
 HC3N_TdV_10_9 = 'data/Per-emb-2-HC3N_10-9_TdV.fits'
+HC3N_TdV_10_9_match = 'data/Per-emb-2-HC3N_10-9_TdV_smooth_regrid.fits'
+HC3N_Ratio = 'data/Per-emb-2-HC3N_ratio_10-9_8-7.fits'
 HC3N_Vc_10_9 = 'data/Per-emb-2-HC3N_10-9_fit_Vc.fits'
 HC3N_dv_10_9 = 'data/Per-emb-2-HC3N_10-9_fit_sigma_v.fits'
 ALMA_cont = 'data/Per-emb-2_1.3mm_ALMA_mJy.fits'
@@ -38,7 +46,10 @@ file_12CO_blue = 'data/Per-emb-2-CO_2-1-TdV-blue.fits'
 file_12CO_red = 'data/Per-emb-2-CO_2-1-TdV-red.fits'
 CO_red_levs = np.arange(2, 20, 2)
 CO_blue_levs = np.arange(1.4, 12, 1.4)
-
+#
+# HC3N ratios
+R_10_8_mean = 0.48
+R_10_8_mean_err = 0.02
 # Polygon coordinates added by hand from the region file
 # The next line is to close the polygon
 poly = np.array([53.079519, 30.83452, 53.078404, 30.836177, 53.076689, 30.83787, 53.075746, 30.837944,
@@ -138,3 +149,51 @@ def convert_into_mili(file_name):
     """
     data, hd = fits.getdata(file_name, header=True)
     return fits.PrimaryHDU(data=data*1e3, header=hd)
+
+def plot_ratios(ax, dens, ratio, temp, N_col=13, label_i=r'N(HC$_3$N)=10$^{12}$ cm$^{-2}$', file_out='test.pdf'):
+    """
+    """
+    ax.scatter(dens[temp == 10.], ratio[temp == 10.], c='#377eb8', alpha=0.7, label=r'T$_{\rm kin}$=10 K')
+    ax.scatter(dens[temp == 12.25], ratio[temp == 12.25], c='#e41a1c', alpha=0.7, label=r'T$_{\rm kin}$=12.25 K')
+    dens_min = 500
+    dens_max = 3e6
+    ax.set_xlim(dens_min, dens_max)
+    ax.set_ylim(0, 1)
+    ax.set_xscale('log')
+    ax.set_xlabel(r'H$_2$ Density (cm$^{-3}$)')
+    ax.set_ylabel(r'Ratio of HC$_3$N (10-9)/(8-7)')
+    ax.hlines(R_10_8_mean, dens_min, dens_max)
+    ax.hlines([R_10_8_mean - R_10_8_mean_err, R_10_8_mean + R_10_8_mean_err], dens_min, dens_max, linestyle="--")
+    ax.text(1e3, 0.85, label_i, fontsize=12)
+    ax.text(1e3, 0.775, r'$\Delta$v=0.5 km s$^{-1}$', fontsize=12)
+    ax.legend(frameon=False, loc=4)
+    return
+
+
+def col_dens_hc3n(file_tdv, nup=8, get_tdv=False):
+    """
+    converts integrated intensity file into column density of the upper level
+
+    :param file_tdv: FITS file with integrated intensity file
+    :param nup: integer (default = 8)
+    :return: Column density in units of cm^-2
+    """
+    from radio_beam import Beam
+    if nup == 8:
+        nu = 72.78382*u.GHz
+        A_ij = 0.294E-04/u.s
+    elif nup == 10:
+        nu = 90.97902*u.GHz
+        A_ij = 0.581e-4/u.s
+    else:
+        print('This transition is not available yet')
+        return np.nan
+    data, hd = fits.getdata(file_tdv, header=True)
+    beam = Beam.from_fits_header(hd)
+    # freq = hd['RESTFREQ'] * u.Hz
+    Jy_K = (1*u.Jy).to(u.K, equivalencies=beam.jtok_equiv(nu))
+    TdV = data * Jy_K
+    if get_tdv:
+        return TdV, ((8 * np.pi * k_B * nu ** 2) / (h * c ** 3 * A_ij) * TdV * u.km / u.s).to(1 / u.cm ** 2)
+    else:
+        return ((8 * np.pi * k_B * nu**2)/(h * c**3 * A_ij) * TdV * u.km / u.s).to(1/u.cm**2)
