@@ -70,11 +70,12 @@ ratio_pb_corr_cutout = mask_ratio.cutout(Ratio_pb_corr)
 #
 my_mask = (mask_ratio.data == 1)
 # <N_10> and <N_10>_PB_corr
-N10_cutout_mean = np.mean(N10_cutout[my_mask])
-N10_pb_cutout_mean = np.mean(N10_cutout[my_mask] / PB10_cutout[my_mask])
-print("Mean col={0:3.2}x10^13, Mean col PB corr={1:3.2}x10^13".format(N10_cutout_mean*1e-13/Pop_Up,
-       N10_pb_cutout_mean*1e-13/Pop_Up))
-print("Difference of {0:2.0} %".format((N10_cutout_mean - N10_pb_cutout_mean) * 100 / N10_cutout_mean))
+N_cutout_mean = np.mean(N10_cutout[my_mask]) / Pop_Up
+N_pb_cutout_mean = np.mean(N10_cutout[my_mask] / PB10_cutout[my_mask]) / Pop_Up
+delta_Ntot = (N_cutout_mean - N_pb_cutout_mean) * 100 / N_cutout_mean
+print("Mean col={0:3.2}x10^13, Mean col PB corr={1:3.2}x10^13".format(N_cutout_mean*1e-13,
+       N_pb_cutout_mean*1e-13))
+print("Difference of {0} %".format(np.around(delta_Ntot, decimals=0)))
 #
 ratio_cutout_mean = np.mean(ratio_cutout[my_mask])
 ratio_pb_corr_cutout_mean = np.mean(ratio_pb_corr_cutout[my_mask])
@@ -88,26 +89,28 @@ ratio_pb_corr_cutout_std = np.std(ratio_pb_corr_cutout[my_mask])
 ratio_cutout_mean_err = ratio_cutout_std/np.sqrt(N_pix)
 ratio_pb_corr_cutout_mean_err = ratio_pb_corr_cutout_std/np.sqrt(N_pix)
 
-print(np.around(ratio_cutout_mean, decimals=2), np.around(ratio_cutout_mean_err, decimals=2))
-print(np.around(ratio_pb_corr_cutout_mean, decimals=2), np.around(ratio_pb_corr_cutout_mean_err, decimals=2))
-
-
-N_tot_mean = N10_cutout_mean / Pop_Up / u.cm**2
-N_tot_mean_pb = N10_pb_cutout_mean / Pop_Up / u.cm**2
+print('Mean Ratio[(10-9)/(8-7)] = {0} +- {1}'.format(np.around(ratio_cutout_mean, decimals=2),
+                                                     np.around(ratio_cutout_mean_err, decimals=2)))
+print('Mean Ratio[(10-9)/(8-7)]_PB_corr = {0} +- {1}'.format(np.around(ratio_pb_corr_cutout_mean, decimals=2),
+                                                             np.around(ratio_pb_corr_cutout_mean_err, decimals=2)))
+#
+N_tot_mean = N_cutout_mean / u.cm**2
+N_tot_mean_pb = N_pb_cutout_mean / u.cm**2
 Area_pix = (A_pix.to(u.rad**2) * (distance*u.pc)**2).to(u.pc**2, equivalencies=u.dimensionless_angles())
 
-N_tot_cutout_sum = (np.sum(N10_cutout[my_mask]) * Area_pix / Pop_Up).decompose()
-N_tot_pb_cutout_sum = (np.sum(N10_cutout[my_mask] / PB10_cutout[my_mask]) * Area_pix / Pop_Up).decompose()
-print('{0:.2e}'.format(N_tot_cutout_sum))
+N_tot_cutout_sum = (np.sum(N10_cutout[my_mask] / Pop_Up) * Area_pix).decompose()
+N_tot_pb_cutout_sum = (np.sum(N10_cutout[my_mask] / PB10_cutout[my_mask] / Pop_Up) * Area_pix).decompose()
 X_HC3N_min = 3.0e-10
 X_HC3N_max = 2.8e-9
 
-from astropy.constants import m_p, G
+from astropy.constants import u as amu
 mu_mass = 2.8
-M_total_min = (N_tot_cutout_sum * mu_mass * m_p).to(u.Msun) / X_HC3N_max
-M_total_max = (N_tot_cutout_sum * mu_mass * m_p).to(u.Msun) / X_HC3N_min
-print(np.around(M_total_min, decimals=3), np.around(M_total_max, decimals=3))
-
-M_total_pb_min = (N_tot_pb_cutout_sum * mu_mass * m_p).to(u.Msun) / X_HC3N_max
-M_total_pb_max = (N_tot_pb_cutout_sum * mu_mass * m_p).to(u.Msun) / X_HC3N_min
-print(np.around(M_total_pb_min, decimals=3), np.around(M_total_pb_max, decimals=3))
+M_total_min = (N_tot_cutout_sum * mu_mass * amu).to(u.Msun) / X_HC3N_max
+M_total_max = (N_tot_cutout_sum * mu_mass * amu).to(u.Msun) / X_HC3N_min
+print('M_streamer_min={0}, M_streamer_max={1}'.format(np.around(M_total_min, decimals=3),
+                                                      np.around(M_total_max, decimals=3)))
+#
+M_total_pb_min = (N_tot_pb_cutout_sum * mu_mass * amu).to(u.Msun) / X_HC3N_max
+M_total_pb_max = (N_tot_pb_cutout_sum * mu_mass * amu).to(u.Msun) / X_HC3N_min
+print('M_streamer_min_PB_corr={0}, M_streamer_max_PB_corr={1}'.format(np.around(M_total_pb_min, decimals=3),
+                                                                      np.around(M_total_pb_max, decimals=3)))
