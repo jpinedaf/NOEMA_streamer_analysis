@@ -39,13 +39,13 @@ ra_ALMA_zoom = 53.07475*u.deg
 dec_ALMA_zoom = 30.8299*u.deg
 radius_ALMA_zoom = (2.5*u.arcsec).to(u.deg)
 distance = 300.
-HC3N_10_9_levels = 10e-3*np.arange(3,20,3)
+HC3N_10_9_levels = 8e-3 * np.arange(5, 20, 3)
 
 # CO contour levels to show outflow
 file_12CO_blue = 'data/Per-emb-2-CO_2-1-TdV-blue.fits'
 file_12CO_red = 'data/Per-emb-2-CO_2-1-TdV-red.fits'
-CO_red_levs = np.arange(2, 20, 2)
-CO_blue_levs = np.arange(1.4, 12, 1.4)
+CO_red_levs = 0.2 * np.arange(5, 55, 10)
+CO_blue_levs = 0.2 * np.arange(5, 55, 10)
 #
 # HC3N ratios
 R_10_8_mean = 0.48
