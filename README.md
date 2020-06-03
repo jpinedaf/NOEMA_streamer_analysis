@@ -2,7 +2,7 @@ About
 -----
 -----
 
-This repository includes the scripts used to carry ou the analysis of the NOEMA streamer paper (Pineda et al. in prep).
+This repository includes the scripts used to carry ou the analysis of the NOEMA streamer paper (Pineda et al., 2020).
 
 it requires the package [velocity_tools](https://github.com/jpinedaf/velocity_tools).
 
