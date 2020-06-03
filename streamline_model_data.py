@@ -62,7 +62,7 @@ d_sky_au = np.sqrt(x1**2 + z1**2)
 dra_stream = -x1.value / distance
 ddec_stream = z1.value / distance
 fil = SkyCoord(dra_stream*u.arcsec, ddec_stream*u.arcsec,
-                 frame=Per2_ref).transform_to(FK5)
+               frame=Per2_ref).transform_to(FK5)
 #
 fig2.show_markers(fil.ra.value*u.deg, fil.dec.value*u.deg,
                   marker='o', color='red', s=3)
@@ -70,7 +70,7 @@ fig2.add_label(0.75, 0.9, r"HC$_3$N ($10-9$)", color='black', relative=True,
                size=14, weight=60)
 freq_HC5N_10_9 = fits.getheader(HC3N_TdV_10_9)['RESTFREQ'] * u.Hz
 fig2.show_circles(ra_Per2, dec_Per2, pb_noema(freq_HC5N_10_9).to(u.deg)*0.5,
-                   ls=':', color='black')
+                  ls=':', color='black')
 ax3.plot(d_sky_au, v_lsr + vy1, color='red')
 ax3.xaxis.set_ticks(np.arange(3e3, 12e3, 2e3))
 ax3.yaxis.set_ticks(np.arange(6.9, 7.6, 0.2))
@@ -80,16 +80,16 @@ ax3.text(2400, 7.5, r"HC$_3$N ($10-9$)")
 ax3.text(2400, 7.45, r"Streamline model", color='red')
 # save files
 fig2.add_colorbar(axis_label_text=r'Integrated Intensity (Jy beam$^{-1}$ km s$^{-1}$)',
-                   ticks=[0, 0.05, 0.1, 0.15])
+                  ticks=[0, 0.05, 0.1, 0.15])
 fig2.colorbar.hide()
 
 import pickle
-stream_model = {'ra':fil.ra.value*u.deg, 'dec':fil.dec.value*u.deg,
-                'd_sky_au':d_sky_au, 'vlsr':v_lsr + vy1}
+stream_model = {'ra': fil.ra.value*u.deg, 'dec': fil.dec.value*u.deg,
+                'd_sky_au': d_sky_au, 'vlsr': v_lsr + vy1}
 with open(stream_pickle, 'wb') as f:
     pickle.dump(stream_model, f)
 
-KDE_vel_rad = {'radius':xx, 'v_lsr':yy, 'dens':zz}
+KDE_vel_rad = {'radius': xx, 'v_lsr': yy, 'dens': zz}
 with open(vlsr_rad_kde_pickle, 'wb') as f:
     pickle.dump(KDE_vel_rad, f)
 

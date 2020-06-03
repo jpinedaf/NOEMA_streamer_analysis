@@ -1,7 +1,6 @@
 import astropy.units as u
 import numpy as np
 from astropy.io import fits
-# set tickmarks inwards
 import matplotlib as mpl
 from matplotlib import rc
 from astropy.constants import c, h, k_B
@@ -9,6 +8,7 @@ from astropy.constants import c, h, k_B
 #rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 rc('font',**{'family':'serif'})#,'sans-serif':['Helvetica']})
 rc('text', usetex=True)
+# set tickmarks inwards
 mpl.rcParams['xtick.direction'] = 'in'
 mpl.rcParams['ytick.direction'] = 'in'
 
