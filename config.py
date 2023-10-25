@@ -66,12 +66,12 @@ def per_emb_2_get_vc_r():
     r_proj is in u.au and V_los is in u.km/u.s
     :return: r_proj, V_los
     """
-    from regions import read_ds9
+    from regions import Regions
     from astropy.wcs import WCS
     from astropy.io import fits
     import velocity_tools.coordinate_offsets as c_offset
     # load region file and WCS structures
-    regions = read_ds9(region_file)
+    regions = Regions.read(region_file, format='ds9')
     wcs_Vc = WCS(HC3N_Vc_10_9)
     #
     hd_Vc = fits.getheader(HC3N_Vc_10_9)
